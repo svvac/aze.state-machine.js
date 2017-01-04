@@ -1,0 +1,27 @@
+{
+  "name": "aze.state-machine",
+  "version": "1.0.0",
+  "description": "Base implementation for a state machine handling events",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svvac/aze.state-machine.js.git"
+  },
+  "keywords": [
+    "tools",
+    "utils",
+    "aze",
+    "state",
+    "machine",
+    "state-machine"
+  ],
+  "author": "svvac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/svvac/aze.state-machine.js/issues"
+  },
+  "homepage": "https://github.com/svvac/aze.state-machine.js#readme"
+}
