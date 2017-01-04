@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/svvac/aze.state-machine.js/issues"
   },
-  "homepage": "https://github.com/svvac/aze.state-machine.js#readme"
+  "homepage": "https://github.com/svvac/aze.state-machine.js#readme",
+  "dependencies": {
+    "aze": "1.x.x"
+  }
 }
