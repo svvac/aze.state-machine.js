@@ -98,7 +98,7 @@ order:
 1. A method `__STATE_NAME__event_name()` than handles `event_name` events when
    in state `STATE_NAME`;
 2. A method `__STATE_NAME__()` that handles all events in state `STATE_NAME`;
-3. A method `____event_name()` than handles all `event_name` events.
+3. A method `____event_name()` that handles all `event_name` events.
 
 If a string property exists with one of these names, the engine will lookup a
 method with that name. This is useful for having several states share the same
