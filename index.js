@@ -95,6 +95,7 @@ class StateMachine {
             if (timeout_cleared) return;
             timeout_cleared = true;
             clearTimeout(t);
+            this.$$debug('--', 'Canceled scheduled', evt);
         };
 
         f.evt = evt;
