@@ -91,6 +91,22 @@ The `heartbeat` parameter to the constructor creates a timer that will feed the
 special `null` event to the state machine at that interval. You can also set
 `this.$heartbeat` to change it afterwards (set to `null` to deactivate).
 
+
+#### Watchers
+You can bind an event handler to a state *change* event, i.e. state activation
+or deactivation. While the machine remains in the same state, no events are
+called (even if e.g. you add a `A` listener while in state `A`).
+
+The `.$on(states, handler)` method registers `handler` to be called when one of
+the states in `states` are activated. Conversely, `.$off()` does the same for
+state deactivation.
+
+There are also `.$once()` and `.$once_off()` that do the same thing but
+immediately removes the handler after it has been called.
+
+These four methods return a handler identifier that can be passed to
+`.$remove_listener()` to unregister it.
+
 ### Handlers
 For every processed event, the engine will look for a handler method in that
 order:
