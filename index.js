@@ -312,7 +312,7 @@ class StateMachine {
         let ret;
 
         try {
-            for (let method in method_list) {
+            for (let method of method_list) {
                 if (!method) continue;
 
                 this.$$debug('Processing', evt, 'with', method.name);
