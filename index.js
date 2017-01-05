@@ -107,7 +107,7 @@ class StateMachine {
                 map[state] = [];
 
             map[state].push(handle);
-            this.$$debug('--', 'Bound handler', handle, 'to', this.$states_str[state], revert ? 'up' : 'down');
+            this.$$debug('--', 'Bound handler', handle, 'to', this.$states_str[state], revert ? 'down' : 'up');
         }
 
         return handle;
@@ -126,7 +126,7 @@ class StateMachine {
             let idx = map[state].indexOf(handle);
             if (idx > -1) {
                 map[state].splice(idx, 1);
-                this.$$debug('--', 'Unbound handler', handle, 'from', this.$states_str[state], revert ? 'up' : 'down');
+                this.$$debug('--', 'Unbound handler', handle, 'from', this.$states_str[state], h.reversed ? 'down' : 'up');
            }
         }
 
