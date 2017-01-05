@@ -303,7 +303,7 @@ class StateMachine {
         // but feel free to do whatever. Class properties and methods with a
         // name starting in "$" and "$$" are reserved by this class so try not
         // to blow everything up.
-        const methodList = [
+        const method_list = [
             this.$$get_method(`__${this.$state_name}__${evt}`),
             this.$$get_method(`__${this.$state_name}__`),
             this.$$get_method(`____${evt}`),
@@ -312,7 +312,7 @@ class StateMachine {
         let ret;
 
         try {
-            for (method in method_list) {
+            for (let method in method_list) {
                 if (!method) continue;
 
                 this.$$debug('Processing', evt, 'with', method.name);
