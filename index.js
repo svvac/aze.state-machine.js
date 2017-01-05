@@ -80,8 +80,28 @@ class StateMachine {
     }
 
     $timeout(duration, token) {
-        this.$$debug('--', 'Registering timeout', token, 'in', duration);
-        return setTimeout(() => this.$push('$timeout', token), duration);
+        return this.$schedule(duration, '$timeout', token);
+    }
+
+    $schedule(duration, evt, payload) {
+        this.$$debug('--', 'Scheduling', evt, 'in', duration);
+
+        let timeout_cleared = false;
+        const t = setTimeout(() => {
+            timeout_cleared = true;
+            this.$push(evt, payload)
+        }, duration);
+        const f = () => {
+            if (timeout_cleared) return;
+            timeout_cleared = true;
+            clearTimeout(t);
+        };
+
+        f.evt = evt;
+        f.payload = payload;
+        f.duration = duration;
+
+        return f;
     }
 
     $$add_listener(states, cb, remove, revert) {
