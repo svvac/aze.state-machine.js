@@ -33,6 +33,7 @@ class StateMachine {
         this.$states_str.forEach((s, i) => this.$states[s] = i);
 
         this.$transition_whitelist = aze.get(config, 'transition_whitelist', null);
+        this.$cascade_handlers = aze.get(config, 'cascade_handlers', false);
 
         if (aze.get(config, 'debug', false)) {
             this.$$debug = function () {
@@ -294,59 +295,38 @@ class StateMachine {
         // event payload. They can act upon the state appropriately. See return
         // value requirements for handlers below.
         //
+        // If an event was not explicitely handled by a handler, we still try
+        // these with lower specificity afterwards if this.$cascade_handlers is
+        // true
+        //
         // By convention, state names are in caps, and event names in lowercase,
         // but feel free to do whatever. Class properties and methods with a
         // name starting in "$" and "$$" are reserved by this class so try not
         // to blow everything up.
-        const method = this.$$get_method(`__${this.$state_name}__${evt}`)
-                    || this.$$get_method(`__${this.$state_name}__`)
-                    || this.$$get_method(`____${evt}`);
-
-        this.$$debug(evt, 'handled by', method ? method.name : method);
+        const methodList = [
+            this.$$get_method(`__${this.$state_name}__${evt}`),
+            this.$$get_method(`__${this.$state_name}__`),
+            this.$$get_method(`____${evt}`),
+        ];
 
         let ret;
 
         try {
-            if (method) {
+            for (method in method_list) {
+                if (!method) continue;
+
+                this.$$debug('Processing', evt, 'with', method.name);
+
                 ret = method.call(this, evt, payload);
 
-                // check in case we entered SMEXCEP
-                this.$$smexcep_check();
-
-                // handler function MUST return something upon handling an
-                // event.
-                //
-                // * If it returns true, all good, we consider the event
-                //   handled.
-                // * If it returns a string or an array, we consider that as an
-                //   event to be immediately triggered on the state machine.
-                // * If false, immediately reemit the same event.
-                //
-                // Contrary to using $push(), the event is added at the
-                // top of the event queue so that it is the next event that will
-                // be fired on the state machine.
-                //
-                // Any other return value is invalid and will trigger a state
-                // machine exception.
-
-                if (ret === true) {
-                    return;
-                } else if (ret === false) {
-                    this.$$debug('Zero-transition');
-                    this.$$event_queue.unshift([ evt, payload ]);
-                    this.$$flush_queue_();
-                    return;
-                } else if (typeof ret === 'string') {
-                    this.$$debug('Zero-transition with event', ret);
-                    this.$$event_queue.unshift([ ret ]);
-                    this.$$flush_queue_();
-                    return;
-                } else if (Array.isArray(ret)) {
-                    this.$$debug('Zero-transition with event', ret[0]);
-                    this.$$event_queue.unshift(ret);
-                    this.$$flush_queue_();
+                // Test handling of the event
+                // If it was handled, stop processing
+                if (this.$$process_handler_return(ret, evt, payload)) {
                     return;
                 }
+
+                // Don't go further if not using cascading handlers
+                if (!this.$cascade_handlers) break;
             }
         } catch (e) {
             console.error('Exception raised while in state', this.$state_name, 'handling event', evt);
@@ -362,6 +342,45 @@ class StateMachine {
         console.error('Unhandled condition for state', this.$state_name, 'with event', evt);
         console.error('Returned', ret);
         this.$panic();
+    }
+
+    $$process_handler_return(ret, evt, payload) {
+        // handler function MUST return something upon handling an
+        // event.
+        //
+        // * If it returns true, all good, we consider the event
+        //   handled.
+        // * If it returns a string or an array, we consider that as an
+        //   event to be immediately triggered on the state machine.
+        // * If false, immediately reemit the same event.
+        //
+        // Contrary to using $push(), the event is added at the
+        // top of the event queue so that it is the next event that will
+        // be fired on the state machine.
+        //
+        // Any other return value is invalid and will trigger a state
+        // machine exception.
+
+        if (ret === true) {
+            return true;
+        } else if (ret === false) {
+            this.$$debug('Zero-transition');
+            this.$$event_queue.unshift([ evt, payload ]);
+            this.$$flush_queue_();
+            return true;
+        } else if (typeof ret === 'string') {
+            this.$$debug('Zero-transition with event', ret);
+            this.$$event_queue.unshift([ ret ]);
+            this.$$flush_queue_();
+            return true;
+        } else if (Array.isArray(ret)) {
+            this.$$debug('Zero-transition with event', ret[0]);
+            this.$$event_queue.unshift(ret);
+            this.$$flush_queue_();
+            return true;
+        }
+
+        return false;
     }
 
     $panic(msg) {

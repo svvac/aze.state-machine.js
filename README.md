@@ -106,6 +106,14 @@ implementation.
 
 The handler methods are passed two arguments; the event name and the payload.
 
+#### Cascading handlers
+By default, the handler resolution stops at the first method found, which is
+then responsible for handling the event.
+
+If `cascade_handlers: true` was passed to the constructor however, the engine
+will lookup consecutive handlers (as per the rules above) in case an event was
+not handled by a more specific handler.
+
 #### Handler capacity
 The handler can do pretty much anything to the state machine, including
 transitionning and feeding events.
