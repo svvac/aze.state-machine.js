@@ -142,3 +142,7 @@ Doing a zero-transition is considered handling an event.
 
 If the `null` (heartbeat) event is not handled, it is ignored and the machine
 will not enter SMEXCEPT.
+
+You can react to entering SMEXCEP by implementing the `.$panic_handler()`
+method.
+

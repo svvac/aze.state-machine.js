@@ -404,9 +404,15 @@ class StateMachine {
     }
 
     $panic(msg) {
+        if (this.$$n !== undefined) setImmediate(() => this.$panic_handler());
+
         this.$$n = undefined;
         this.$$stop_heartbeat();
         throw new Error(msg || 'State machine exception');
+    }
+
+    $panic_handler() {
+        // user implemented
     }
 
     $$smexcep_check() {
