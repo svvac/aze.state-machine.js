@@ -1,6 +1,6 @@
 {
   "name": "aze.state-machine",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Base implementation for a state machine handling events",
   "main": "index.js",
   "scripts": {
